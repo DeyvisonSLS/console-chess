@@ -1,6 +1,6 @@
 using System;
 
-namespace xadrez_console.Board
+namespace Board
 {
     class Position
     {
