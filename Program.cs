@@ -8,7 +8,8 @@ namespace xadrez_console
         static void Main(string[] args)
         {
             GameBoard gboard = new GameBoard(8, 8);
-            Console.ReadLine();
+            
+            Screen.PrintGameBoard(gboard);
         }
     }
 }
