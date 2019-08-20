@@ -9,9 +9,10 @@ namespace Board
         public Color Color { get; protected set; }
         public int qtdMoves { get; protected set; }
         public GameBoard GameBoard { get; protected set; }
-        public Piece(Position positioning, GameBoard gameBoard, Color color)
+        public Piece(GameBoard gameBoard, Color color)
         {
-            Positioning = positioning;
+            //quem coloca a posição da peça é o tabuleiro, sendo assim o positioning é nulo no momento de criação
+            Positioning = null;
             GameBoard = gameBoard;
             Color = color;
             qtdMoves = 0;

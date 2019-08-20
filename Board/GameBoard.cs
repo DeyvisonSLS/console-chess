@@ -15,5 +15,11 @@ namespace Board
         {
             return Pieces[line, collumn];
         }
+        public void PutPiece(Piece p, Position pos)
+        {
+            Pieces[pos.Line, pos.Collumn] = p;
+            //Após ser posicionada, a peça recebe a informação do seu posicionamento no tabuleiro
+            p.Positioning = pos;
+        }
     }
 }

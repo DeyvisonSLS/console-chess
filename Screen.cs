@@ -13,11 +13,11 @@ namespace xadrez_console
                 {
                     if(gboard.GetPiece(i, j) == null)
                     {
-                        Console.Write("_  ");
+                        Console.Write("_ ");
                     }
                     else
                     {
-                        Console.Write(gboard.GetPiece(i, j) + "  ");
+                        Console.Write(gboard.GetPiece(i, j) + " ");
                     }
                 }
                 Console.WriteLine();
