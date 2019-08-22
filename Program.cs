@@ -8,21 +8,14 @@ namespace xadrez_console
     {
         static void Main(string[] args)
         {
-            try
-            {
-                GameBoard gboard = new GameBoard(8, 8);
+            ChessPosition chessPos = new ChessPosition('c', 7);
+            // Console.WriteLine(chessPos);
+            // Console.WriteLine(chessPos.ToPosition());
 
-                gboard.PutPiece(new King(gboard, Color.Black), new Position(0, 0));
-                gboard.PutPiece(new Tower(gboard, Color.Black), new Position(1, 7));
-                gboard.PutPiece(new King(gboard, Color.White), new Position(0, 7));
+            GameBoard gboard = new GameBoard(8, 8);
+            gboard.PutPiece(new King(gboard, Color.Black), chessPos.ToPosition());
 
-                Screen.PrintGameBoard(gboard);
-            }
-            catch(GameBoardException e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            Console.ReadLine();
+            Screen.PrintGameBoard(gboard);
         }
     }
 }
