@@ -34,7 +34,7 @@ namespace Board
             //Após ser posicionada, a peça recebe a informação do seu posicionamento no tabuleiro
             p.Positioning = pos;
         }
-        public Piece RemovePiece(Position pos)
+        public Piece LiftPiece(Position pos)
         {
             if(GetPiece(pos) == null)
             {

@@ -17,5 +17,9 @@ namespace Board
             Color = color;
             qtdMoves = 0;
         }
+        public void IncrementQtdMoves()
+        {
+            qtdMoves++;
+        }
     }
 }
