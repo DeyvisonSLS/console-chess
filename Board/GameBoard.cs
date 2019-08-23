@@ -34,6 +34,17 @@ namespace Board
             //Após ser posicionada, a peça recebe a informação do seu posicionamento no tabuleiro
             p.Positioning = pos;
         }
+        public Piece RemovePiece(Position pos)
+        {
+            if(GetPiece(pos) == null)
+            {
+                return null;
+            }
+            Piece aux = GetPiece(pos);
+            aux.Positioning = null;
+            Pieces[pos.Line, pos.Collumn] = null;
+            return aux;
+        }
         public bool ValidPosition(Position pos)
         {
             if(pos.Line < 0 || pos.Line >= Lines || pos.Collumn < 0 || pos.Collumn >= Collumns)
