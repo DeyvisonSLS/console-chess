@@ -3,7 +3,7 @@ using Board;
 
 namespace Board
 {
-    class Piece
+    abstract class Piece
     {
         public Position Positioning { get; set; }
         public Color Color { get; protected set; }
@@ -21,5 +21,6 @@ namespace Board
         {
             qtdMoves++;
         }
+        public abstract bool[,] PossibleMovements();
     }
 }

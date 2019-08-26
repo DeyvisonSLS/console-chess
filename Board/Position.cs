@@ -11,6 +11,11 @@ namespace Board
             Collumn = collumn;
             Line = line;
         }
+        public void DefineValues(int line, int collumn)
+        {
+            Line = line;
+            Collumn = collumn;
+        }
         public override string ToString()
         {
             return Line

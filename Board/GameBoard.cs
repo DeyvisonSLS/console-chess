@@ -45,6 +45,7 @@ namespace Board
             Pieces[pos.Line, pos.Collumn] = null;
             return aux;
         }
+        //  Verifying to can't out of ranging the array.
         public bool ValidPosition(Position pos)
         {
             if(pos.Line < 0 || pos.Line >= Lines || pos.Collumn < 0 || pos.Collumn >= Collumns)

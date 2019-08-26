@@ -29,7 +29,7 @@ namespace ChessPieces
         }
         public void PutPieces()
         {
-            Gboard.PutPiece(new King(Gboard, Color.Black), new ChessPosition('c', 3).ToPosition());
+            Gboard.PutPiece(new Tower(Gboard, Color.Black), new ChessPosition('c', 3).ToPosition());
         }
     }
 }
