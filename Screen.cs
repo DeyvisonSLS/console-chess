@@ -6,7 +6,7 @@ namespace xadrez_console
 {
     class Screen
     {
-        //  Printa o gameboard sem o auxílio da matriz de movimentos possíveis, sem alterar cor de fundo
+        // Prints the gameboard without the possible movements; without change the background color
         public static void PrintGameBoard(GameBoard gboard)
         {
             for(int i = 0; i < gboard.Lines; i++)
@@ -25,11 +25,11 @@ namespace xadrez_console
             ConsoleColor black = Console.BackgroundColor;
             ConsoleColor gray = ConsoleColor.DarkGray;
 
-            //  Print das linhas (vertical)
+            //  Line's printing (vertical)
             for(int i = 0; i < gboard.Lines; i++)
             {
                 Console.Write(8 - i + " ");
-                //  Print das colunas (horizontal)
+                //  Collumn's printing (horizontal)
                 for(int j = 0; j < gboard.Collumns; j++)
                 {
                     if(possiblePositions[i,j])
@@ -42,15 +42,15 @@ namespace xadrez_console
                     }
                     PrintPiece(gboard.GetPiece(i,j));
                 }
-                //  Se a última posição da coluna permanecer em gray, as próximas casas terão o fundo gray até que o print das colunas ache uma
-                //  casa que tenha o valor false na matriz possiblePositions[] e volte para black
+                //  If the last collumn's position stay in gray, the next place in the next line will have the background
+                //  color gray until that the "for" find in the array a false value.
                 //
-                //  Resetando o fundo para black sempre que sair da impressão das colunas (impressão horizontal)
+                //  So, resetting the background color whenever that we reach the last collumn, should solve the problem
                 Console.BackgroundColor = black;
                 Console.WriteLine();
             }
             Console.WriteLine("  a b c d e f g h");
-            //  Último reset do fundo para black antes de sair da impressão do tabuleiro
+            //  Last background color reset before get out the gameboard printing
             Console.BackgroundColor = black;
         }
         public static ChessPosition ReadChessPosition()
