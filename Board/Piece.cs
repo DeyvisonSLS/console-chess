@@ -11,7 +11,7 @@ namespace Board
         public GameBoard GameBoard { get; protected set; }
         public Piece(GameBoard gameBoard, Color color)
         {
-            //quem coloca a posição da peça é o tabuleiro, sendo assim o positioning é nulo no momento de criação
+            //  Who initially places the pieces is the game board, so the positioning is null once the piece has been created but not positioned.
             Positioning = null;
             GameBoard = gameBoard;
             Color = color;
@@ -20,6 +20,27 @@ namespace Board
         public void IncrementQtdMoves()
         {
             qtdMoves++;
+        }
+        //  Sometimes the piece is blocked, it certifies if at least it has one possible position.
+        public bool ExistsPossibleMovement()
+        {
+            bool[,] mat = PossibleMovements();
+            for(int i = 0; i < GameBoard.Lines; i++)
+            {
+                for(int j = 0; j < GameBoard.Collumns; j++)
+                {
+                    if(mat[i, j])
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        //  It returns: true = Can move to "pos" -- or -- false = can't move to "pos"
+        public bool CanMoveTo (Position pos)
+        {
+            return PossibleMovements()[pos.Line, pos.Collumn];
         }
         public abstract bool[,] PossibleMovements();
     }

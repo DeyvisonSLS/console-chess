@@ -12,18 +12,22 @@ namespace ChessPieces
         private bool CanMove(Position pos)
         {
             Piece p = GameBoard.GetPiece(pos);
+            //  It returns true if the posiitoning (pos) reported value is null in the game board matrix.
             return p == null || p.Color != this.Color;
         }
         public override bool[,] PossibleMovements()
         {
+            //  It creates the boolean matrix for posteriorly print the background with diferent colors wherever it's true.
             bool[,] mat = new bool[GameBoard.Lines, GameBoard.Collumns];
-
+            //  Pos variable will be altered and reused along the definitions
             Position pos = new Position(0, 0);
 
-            //Upper position
+            //  Upper position
+            //  The vertical position (Line) is equal the current line - 1 (going up), keeping the collumn position in the same place.
             pos.DefineValues(Positioning.Line - 1, Positioning.Collumn);
             while(GameBoard.ValidPosition(pos) && CanMove(pos))
             {
+                //  If the position is valid and the piece can move (the place has no piece or your pieces), in the position write true.
                 mat[pos.Line, pos.Collumn] = true;
                 //  If there is a piece in this current position and it's a oponent, break the while, the tower just comes here.
                 if(GameBoard.GetPiece(pos) != null && GameBoard.GetPiece(pos).Color != this.Color)

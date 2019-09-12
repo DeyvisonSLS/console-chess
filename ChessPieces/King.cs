@@ -16,11 +16,13 @@ namespace ChessPieces
         }
         public override bool[,] PossibleMovements()
         {
+            //  It creates the boolean matrix for posteriorly print the background with diferent colors wherever it's true.
             bool[,] mat = new bool[GameBoard.Lines, GameBoard.Collumns];
-
+            //  Pos variable will be altered and reused along the definitions
             Position pos = new Position(0, 0);
 
-            //Upper position based on the actual piece position.
+            //  Upper position
+            //  The vertical position (Line) is equal the current line - 1 (going up), keeping the collumn position in the same place.
             pos.DefineValues(Positioning.Line - 1, Positioning.Collumn);
             if(GameBoard.ValidPosition(pos) && CanMove(pos))
             {
@@ -68,8 +70,11 @@ namespace ChessPieces
             {
                 mat[pos.Line, pos.Collumn] = true;
             }
+
+            //  Return the array of booleans
             return mat;
         }
+        //  Return specifc letter depending on the country/language.
         public override string ToString()
         {
             if(CultureInfo.CurrentCulture.Name == "pt-BR")
