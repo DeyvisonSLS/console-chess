@@ -26,8 +26,13 @@ namespace xadrez_console
         public static void PrintCapturedPieces(ChessMatch chessMatch)
         {
             Console.WriteLine("Captured Pieces:");
+            //
+            ConsoleColor aux = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.Write("Black:");
             Console.WriteLine(PrintHashSet(chessMatch.GetCapturedPieces(Color.Black)));
+            Console.ForegroundColor = aux;
+            //
             Console.Write("White:");
             Console.WriteLine(PrintHashSet(chessMatch.GetCapturedPieces(Color.White)));
         }
