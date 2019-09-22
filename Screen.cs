@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Text;
 using Board;
 using ChessPieces;
 
@@ -19,6 +21,26 @@ namespace xadrez_console
                 Console.WriteLine();
             }
             Console.WriteLine("  a b c d e f g h");
+        }
+        //
+        public static void PrintCapturedPieces(ChessMatch chessMatch)
+        {
+            Console.WriteLine("Captured Pieces:");
+            Console.Write("Black:");
+            Console.WriteLine(PrintHashSet(chessMatch.GetCapturedPieces(Color.Black)));
+            Console.Write("White:");
+            Console.WriteLine(PrintHashSet(chessMatch.GetCapturedPieces(Color.White)));
+        }
+        public static string PrintHashSet(HashSet<Piece> hashset)
+        {
+            StringBuilder str = new StringBuilder();
+            str.Append("[");
+            foreach(Piece x in hashset)
+            {
+                str.Append(x + " ");
+            }
+            str.Append("]");
+            return str.ToString();
         }
         public static void PrintGameBoard(GameBoard gboard, bool[,] possiblePositions)
         {

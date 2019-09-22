@@ -21,6 +21,8 @@ namespace xadrez_console
                         Console.Clear();
                         Screen.PrintGameBoard(chessMatch.Gboard);
                         Console.WriteLine();
+                        Screen.PrintCapturedPieces(chessMatch);
+                        Console.WriteLine();
                         Console.WriteLine("Turn: " + chessMatch.turn);
                         //  Set a string with the name of the current player (White or Black)
                         string currentPlayer = (chessMatch.currentPlayer == Color.White) ? "White" : "Black";

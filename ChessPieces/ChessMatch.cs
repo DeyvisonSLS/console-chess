@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Board;
 
 namespace ChessPieces
@@ -8,12 +9,16 @@ namespace ChessPieces
         public bool MatchEnded { get; private set; }
         public int turn { get; private set; }
         public Color currentPlayer { get; private set; }
+        private HashSet<Piece> PiecesInGame;
+        private HashSet<Piece> CapturedPieces;
         public ChessMatch()
         {
             Gboard = new GameBoard(8, 8);
             turn = 1;
             currentPlayer = Color.White;
             MatchEnded = false;
+            PiecesInGame = new HashSet<Piece>();
+            CapturedPieces = new HashSet<Piece>();
             PutPieces();
         }
         public void DoTheMove(Position origin, Position destination)
@@ -46,11 +51,15 @@ namespace ChessPieces
         }
         public void MovePiece(Position origin, Position destination)
         {
-            //  It takes the pieces (now it is lifted up) in origin and in the destination
+            //  It takes the pieces (now it is lifted up) in origin and in the destination.
             Piece pPicked = Gboard.LiftPiece(origin);
-            //  For a while i'm storing but not using the piece captured
+            //  Storing and adding to the hashset of captured pieces if it isn't null.
             Piece pCaptured = Gboard.LiftPiece(destination);
-            //  Putting piece in game board and changing the position inside the piece; after, increment the piece's move
+            if(pCaptured != null)
+            {
+                CapturedPieces.Add(pCaptured);
+            }
+            //  Putting piece in game board and changing the position inside the piece; after, increment the piece's move.
             Gboard.PutPiece(pPicked, destination);
             pPicked.Positioning = destination;
             pPicked.IncrementQtdMoves();
@@ -66,22 +75,52 @@ namespace ChessPieces
                 currentPlayer = Color.White;
             }
         }
+        public HashSet<Piece> GetCapturedPieces (Color color)
+        {
+            HashSet<Piece> aux = new HashSet<Piece>();
+            foreach(Piece x in CapturedPieces)
+            {
+                if(x.Color == color)
+                {
+                    aux.Add(x);
+                }
+            }
+            return aux;
+        }
+        public HashSet<Piece> GetPiecesInGame (Color color)
+        {
+            HashSet<Piece> aux = new HashSet<Piece>();
+            foreach(Piece x in PiecesInGame)
+            {
+                if(x.Color == color)
+                {
+                    aux.Add(x);
+                }
+            }
+            aux.ExceptWith(GetCapturedPieces(color));
+            return aux;
+        }
+        public void PutNewPiece(char collumn, int line, Piece piece)
+        {
+            Gboard.PutPiece(piece, new ChessPosition(collumn, line).ToPosition());
+            PiecesInGame.Add(piece);
+        }
         //  Here the chessmatch organize the initial pieces set up.
         public void PutPieces()
         {
-            Gboard.PutPiece(new Tower(Gboard, Color.White), new ChessPosition('c', 1).ToPosition());
-            Gboard.PutPiece(new Tower(Gboard, Color.White), new ChessPosition('c', 2).ToPosition());
-            Gboard.PutPiece(new Tower(Gboard, Color.White), new ChessPosition('d', 2).ToPosition());
-            Gboard.PutPiece(new Tower(Gboard, Color.White), new ChessPosition('e', 2).ToPosition());
-            Gboard.PutPiece(new Tower(Gboard, Color.White), new ChessPosition('e', 1).ToPosition());
-            Gboard.PutPiece(new King(Gboard, Color.White), new ChessPosition('d', 1).ToPosition());
-            
-            Gboard.PutPiece(new Tower(Gboard, Color.Black), new ChessPosition('c', 8).ToPosition());
-            Gboard.PutPiece(new Tower(Gboard, Color.Black), new ChessPosition('c', 7).ToPosition());
-            Gboard.PutPiece(new Tower(Gboard, Color.Black), new ChessPosition('d', 7).ToPosition());
-            Gboard.PutPiece(new Tower(Gboard, Color.Black), new ChessPosition('e', 7).ToPosition());
-            Gboard.PutPiece(new Tower(Gboard, Color.Black), new ChessPosition('e', 8).ToPosition());
-            Gboard.PutPiece(new King(Gboard, Color.Black), new ChessPosition('d', 8).ToPosition());
+            PutNewPiece('c', 1, new Tower(Gboard, Color.White));
+            PutNewPiece('c', 2, new Tower(Gboard, Color.White));
+            PutNewPiece('d', 2, new Tower(Gboard, Color.White));
+            PutNewPiece('e', 2, new Tower(Gboard, Color.White));
+            PutNewPiece('e', 1, new Tower(Gboard, Color.White));
+            PutNewPiece('d', 1, new King(Gboard, Color.White));
+
+            PutNewPiece('c', 8, new Tower(Gboard, Color.Black));
+            PutNewPiece('c', 7, new Tower(Gboard, Color.Black));
+            PutNewPiece('d', 7, new Tower(Gboard, Color.Black));
+            PutNewPiece('e', 7, new Tower(Gboard, Color.Black));
+            PutNewPiece('e', 8, new Tower(Gboard, Color.Black));
+            PutNewPiece('d', 8, new King(Gboard, Color.Black));
         }
     }
 }
