@@ -21,6 +21,10 @@ namespace Board
         {
             qtdMoves++;
         }
+        public void DecrementQtdMoves()
+        {
+            qtdMoves--;
+        }
         //  Sometimes the piece is blocked, it certifies if at least it has one possible position.
         public bool ExistsPossibleMovement()
         {

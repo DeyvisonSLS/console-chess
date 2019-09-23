@@ -11,6 +11,7 @@ namespace ChessPieces
         public Color currentPlayer { get; private set; }
         private HashSet<Piece> PiecesInGame;
         private HashSet<Piece> CapturedPieces;
+        public bool Check { get; set; }
         public ChessMatch()
         {
             Gboard = new GameBoard(8, 8);
@@ -23,9 +24,72 @@ namespace ChessPieces
         }
         public void DoTheMove(Position origin, Position destination)
         {
-            MovePiece(origin, destination);
+            Piece capturedPiece = MovePiece(origin, destination);
+
+            //  Current player getting itself in check
+            if(Check == true)
+            {
+                if(InCheck(currentPlayer))
+                {
+                    UndoMovement(origin, destination, capturedPiece);
+                    throw new GameBoardException("You can not let your own king in check, try to save him!");
+                }
+            }
+            else
+            {
+                if(InCheck(currentPlayer))
+                {
+                    UndoMovement(origin, destination, capturedPiece);
+                    throw new GameBoardException("You must not put your own king in check!");
+                }
+            }
+            
+            //  Current player cheking his adversary
+            if(InCheck(AdversaryOf(currentPlayer)))
+            {
+                Check = true;
+            }
+            else
+            {
+                Check = false;
+            }
+
             turn++;
             ChangePlayer();
+        }
+        public void UndoMovement(Position origin, Position destination, Piece capturedPiece)
+        {
+            //  Lift up the piece at destination and storing it to use after
+            Piece pPicked = Gboard.LiftPiece(destination);
+            //
+            if(capturedPiece != null)
+            {
+                //  Give captured piece back to previous location (the pPicked destination)
+                Gboard.PutPiece(capturedPiece, destination);
+                //  Remove it from the captured pieces set
+                CapturedPieces.Remove(capturedPiece);
+            }
+            //  Using the lifted up piece to place it as it was before
+            Gboard.PutPiece(pPicked, origin);
+            pPicked.Positioning = origin;
+            pPicked.DecrementQtdMoves();
+        }
+        public Piece MovePiece(Position origin, Position destination)
+        {
+            //  It takes the pieces (now it is lifted up) in origin and in the destination.
+            Piece pPicked = Gboard.LiftPiece(origin);
+            //  Storing and adding to the hashset of captured pieces if it isn't null.
+            Piece pCaptured = Gboard.LiftPiece(destination);
+            if(pCaptured != null)
+            {
+                CapturedPieces.Add(pCaptured);
+            }
+            //  Putting piece in game board and changing the position inside the piece; after, increment the piece's move.
+            Gboard.PutPiece(pPicked, destination);
+            pPicked.Positioning = destination;
+            pPicked.IncrementQtdMoves();
+
+            return pCaptured;
         }
         public void ValidateOriginPosition(Position pos)
         {
@@ -48,21 +112,6 @@ namespace ChessPieces
             {
                 throw new GameBoardException("Impossible movement.");
             }
-        }
-        public void MovePiece(Position origin, Position destination)
-        {
-            //  It takes the pieces (now it is lifted up) in origin and in the destination.
-            Piece pPicked = Gboard.LiftPiece(origin);
-            //  Storing and adding to the hashset of captured pieces if it isn't null.
-            Piece pCaptured = Gboard.LiftPiece(destination);
-            if(pCaptured != null)
-            {
-                CapturedPieces.Add(pCaptured);
-            }
-            //  Putting piece in game board and changing the position inside the piece; after, increment the piece's move.
-            Gboard.PutPiece(pPicked, destination);
-            pPicked.Positioning = destination;
-            pPicked.IncrementQtdMoves();
         }
         private void ChangePlayer()
         {
@@ -99,6 +148,49 @@ namespace ChessPieces
             }
             aux.ExceptWith(GetCapturedPieces(color));
             return aux;
+        }
+        public Color AdversaryOf(Color color)
+        {
+            if(color == Color.White)
+            {
+                return Color.Black;
+            }
+            else
+            {
+                return Color.White;
+            }
+        }
+        private Piece FindKingOf(Color color)
+        {
+            foreach(Piece x in GetPiecesInGame(color))
+            {
+                if(x is King)
+                {
+                    return x;
+                }
+            }
+            return null;
+        }
+        public bool InCheck(Color color)
+        {
+            Piece king = FindKingOf(color);
+            if(king == null)
+            {
+                throw new GameBoardException("There is no king of the color " + color + " in the game board.");
+            }
+            foreach(Piece x in GetPiecesInGame(AdversaryOf(color)))
+            {
+                if(x.ExistsPossibleMovement())
+                {
+                    bool[,] mat = x.PossibleMovements();
+                    //  If in the positioning of our king, the adversary can move, so we are in check.
+                    if(mat[king.Positioning.Line, king.Positioning.Collumn])
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
         public void PutNewPiece(char collumn, int line, Piece piece)
         {

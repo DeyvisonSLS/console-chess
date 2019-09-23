@@ -35,6 +35,11 @@ namespace xadrez_console
             //
             Console.Write("White:");
             Console.WriteLine(PrintHashSet(chessMatch.GetCapturedPieces(Color.White)));
+            if(chessMatch.Check)
+            {
+                Console.WriteLine();
+                Console.WriteLine(chessMatch.currentPlayer.ToString() + " king is in check!");
+            }
         }
         public static string PrintHashSet(HashSet<Piece> hashset)
         {
