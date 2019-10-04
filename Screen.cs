@@ -23,7 +23,7 @@ namespace xadrez_console
             Console.WriteLine("  a b c d e f g h");
         }
         //
-        public static void PrintCapturedPieces(ChessMatch chessMatch)
+        public static void PrintMatchInfo(ChessMatch chessMatch)
         {
             Console.WriteLine("Captured Pieces:");
             //
@@ -35,10 +35,36 @@ namespace xadrez_console
             //
             Console.Write("White:");
             Console.WriteLine(PrintHashSet(chessMatch.GetCapturedPieces(Color.White)));
-            if(chessMatch.Check)
+
+            Console.WriteLine();
+
+            if(!chessMatch.MatchEnded)
             {
+                Console.WriteLine("Turn: " + chessMatch.turn);
+                //  Set a string with the name of the current player (White or Black)
+                string currentPlayer = (chessMatch.currentPlayer == Color.White) ? "White" : "Black";
+                Console.WriteLine("It's the player's turn: " + currentPlayer);
                 Console.WriteLine();
-                Console.WriteLine(chessMatch.currentPlayer.ToString() + " king is in check!");
+                            
+                if(chessMatch.Check)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine(chessMatch.currentPlayer.ToString() + " king is in check!");
+                }
+            }
+            else
+            {
+                //Match is ended!
+                Console.WriteLine("Check mate! " + chessMatch.currentPlayer.ToString() + " wins!");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Press enter to play again.");
+                Console.ForegroundColor = aux;
+
+                ConsoleKeyInfo key = Console.ReadKey(true);
+                if(key.ToString() == "enter")
+                {
+                    chessMatch.ResetMatch();
+                }
             }
         }
         public static string PrintHashSet(HashSet<Piece> hashset)

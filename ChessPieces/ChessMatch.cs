@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using Board;
 
 namespace ChessPieces
@@ -17,11 +18,16 @@ namespace ChessPieces
             Gboard = new GameBoard(8, 8);
             turn = 1;
             currentPlayer = Color.White;
-            MatchEnded = false;
+            MatchEnded = true;
             PiecesInGame = new HashSet<Piece>();
             CapturedPieces = new HashSet<Piece>();
             PutPieces();
         }
+        public void ResetMatch()
+        {
+            MatchEnded = false;
+        }
+        //  Here we make the tests
         public void DoTheMove(Position origin, Position destination)
         {
             Piece capturedPiece = MovePiece(origin, destination);
@@ -54,8 +60,15 @@ namespace ChessPieces
                 Check = false;
             }
 
-            turn++;
-            ChangePlayer();
+            if(CheckMate(AdversaryOf(currentPlayer)))
+            {
+                MatchEnded = true;
+            }
+            else
+            {
+                turn++;
+                ChangePlayer();
+            }
         }
         public void UndoMovement(Position origin, Position destination, Piece capturedPiece)
         {
@@ -192,6 +205,42 @@ namespace ChessPieces
             }
             return false;
         }
+        public bool CheckMate(Color color)
+        {
+            if(!InCheck(color))
+            {
+                return false;
+            }
+            //  Only enter if the king is in check
+            //  InCheck = true
+            foreach(Piece x in GetPiecesInGame(color))
+            {
+                bool[,] mat = x.PossibleMovements();
+                for(int i = 0; i < Gboard.Lines; i++)
+                {
+                    for(int j = 0; j < Gboard.Collumns; j++)
+                    {
+                        if(mat[i, j])
+                        {
+                            Position origin = x.Positioning;
+                            Position destination = new Position(i, j);
+                            //  Make a movement and return a piece for test effects
+                            Piece capturedPiece = MovePiece(origin, destination);
+                            bool testCheck = InCheck(color);
+                            //  Undoing things, we have use it before just for tests
+                            UndoMovement(origin, destination, capturedPiece);
+                            //  If after test the movemment, the [InCheck = true] becomes [InCheck = false], there is at least one movemment that save the king
+                            if(!testCheck)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            //  If in any scenarios the InCheck have no modification to false (is not in check), then there is no movement to save the king.
+            return true;
+        }
         public void PutNewPiece(char collumn, int line, Piece piece)
         {
             Gboard.PutPiece(piece, new ChessPosition(collumn, line).ToPosition());
@@ -200,19 +249,26 @@ namespace ChessPieces
         //  Here the chessmatch organize the initial pieces set up.
         public void PutPieces()
         {
-            PutNewPiece('c', 1, new Tower(Gboard, Color.White));
-            PutNewPiece('c', 2, new Tower(Gboard, Color.White));
-            PutNewPiece('d', 2, new Tower(Gboard, Color.White));
-            PutNewPiece('e', 2, new Tower(Gboard, Color.White));
-            PutNewPiece('e', 1, new Tower(Gboard, Color.White));
-            PutNewPiece('d', 1, new King(Gboard, Color.White));
+            PutNewPiece('a', 8, new King(Gboard, Color.Black));
+            PutNewPiece('b', 8, new Tower(Gboard, Color.Black));
 
-            PutNewPiece('c', 8, new Tower(Gboard, Color.Black));
-            PutNewPiece('c', 7, new Tower(Gboard, Color.Black));
-            PutNewPiece('d', 7, new Tower(Gboard, Color.Black));
-            PutNewPiece('e', 7, new Tower(Gboard, Color.Black));
-            PutNewPiece('e', 8, new Tower(Gboard, Color.Black));
-            PutNewPiece('d', 8, new King(Gboard, Color.Black));
+            PutNewPiece('d', 1, new King(Gboard, Color.White));
+            PutNewPiece('c', 1, new Tower(Gboard, Color.White));
+            PutNewPiece('h', 7, new Tower(Gboard, Color.White));
+
+            // PutNewPiece('c', 1, new Tower(Gboard, Color.White));
+            // PutNewPiece('c', 2, new Tower(Gboard, Color.White));
+            // PutNewPiece('d', 2, new Tower(Gboard, Color.White));
+            // PutNewPiece('e', 2, new Tower(Gboard, Color.White));
+            // PutNewPiece('e', 1, new Tower(Gboard, Color.White));
+            // PutNewPiece('d', 1, new King(Gboard, Color.White));
+
+            // PutNewPiece('c', 8, new Tower(Gboard, Color.Black));
+            // PutNewPiece('c', 7, new Tower(Gboard, Color.Black));
+            // PutNewPiece('d', 7, new Tower(Gboard, Color.Black));
+            // PutNewPiece('e', 7, new Tower(Gboard, Color.Black));
+            // PutNewPiece('e', 8, new Tower(Gboard, Color.Black));
+            // PutNewPiece('d', 8, new King(Gboard, Color.Black));
         }
     }
 }
