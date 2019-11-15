@@ -100,7 +100,7 @@ namespace xadrez_console
                     }
                     PrintPiece(gboard.GetPiece(i,j));
                 }
-                //  If the last collumn's position stay in gray, the next place in the next line will have the background
+                //  If the last collumn's position stay in gray, the next place (line position index 8, 7, 6...) in the next line will have the background
                 //  color gray until that the "for" find in the array a false value.
                 //
                 //  So, resetting the background color whenever that we reach the last collumn, should solve the problem
@@ -113,7 +113,6 @@ namespace xadrez_console
         }
         public static ChessPosition ReadChessPosition()
         {
-
             string s = Console.ReadLine();
             char collumn;
             int line;
