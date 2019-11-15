@@ -4,9 +4,9 @@ using Board;
 
 namespace ChessPieces
 {
-    class Tower : Piece
+    class Rook : Piece
     {
-        public Tower(GameBoard gameBoard, Color color) : base(gameBoard, color)
+        public Rook(GameBoard gameBoard, Color color) : base(gameBoard, color)
         {
         }
         private bool CanMove(Position pos)
@@ -27,7 +27,7 @@ namespace ChessPieces
             pos.DefineValues(Positioning.Line - 1, Positioning.Collumn);
             while(GameBoard.ValidPosition(pos) && CanMove(pos))
             {
-                //  If the position is valid and the piece can move (the place has no piece or your pieces), in the position write true.
+                //  If the position is valid and the piece can move (the place has no piece or your own pieces), in the position write true.
                 mat[pos.Line, pos.Collumn] = true;
                 //  If there is a piece in this current position and it's a oponent, break the while, the tower just comes here.
                 if(GameBoard.GetPiece(pos) != null && GameBoard.GetPiece(pos).Color != this.Color)
@@ -76,7 +76,18 @@ namespace ChessPieces
         }
         public override string ToString()
         {
-            return "T";
+            if(CultureInfo.CurrentCulture.Name == "pt-BR")
+            {
+                return "T";
+            }
+            else if(CultureInfo.CurrentCulture.Name == "en-US")
+            {
+                return "R";
+            }
+            else
+            {
+                return "erro";
+            }
         }
     }
 }
