@@ -13,6 +13,7 @@ namespace ChessPieces
         private HashSet<Piece> PiecesInGame;
         private HashSet<Piece> CapturedPieces;
         public bool Check { get; set; }
+        public Piece VulnerableEnPassant { get; private set; }
         public ChessMatch()
         {
             Gboard = new GameBoard(8, 8);
@@ -21,6 +22,7 @@ namespace ChessPieces
             MatchEnded = true;
             PiecesInGame = new HashSet<Piece>();
             CapturedPieces = new HashSet<Piece>();
+            VulnerableEnPassant = null;
             PutPieces();
         }
         public void ResetMatch()
@@ -69,6 +71,18 @@ namespace ChessPieces
                 turn++;
                 ChangePlayer();
             }
+
+            Piece p = Gboard.GetPiece(destination);
+            // #SpecialMovement : En passant
+            if(p is Pawn && (destination.Line == origin.Line - 2 || destination.Line == origin.Line + 2))
+            {
+                VulnerableEnPassant = p;
+            }
+            else
+            {
+                VulnerableEnPassant = null;
+            }
+
         }
         public void UndoMovement(Position origin, Position destination, Piece capturedPiece)
         {
@@ -86,6 +100,47 @@ namespace ChessPieces
             Gboard.PutPiece(pPicked, origin);
             pPicked.Positioning = origin;
             pPicked.DecrementQtdMoves();
+
+            //  #SpecialMovement : Castling (1)
+            if(pPicked is King && destination.Collumn == origin.Collumn + 2)
+            {
+                Position rookOrigin = new Position(origin.Line, origin.Collumn + 3);
+                Position rookDestination = new Position(origin.Line, origin.Collumn + 1);
+                //  It takes the pieces (now it is lifted up) in origin and in the destination.
+                Piece p = Gboard.LiftPiece(rookDestination);
+                Gboard.PutPiece(p, rookOrigin);
+                p.Positioning = rookDestination;
+                p.DecrementQtdMoves();
+            }
+            //  #SpecialMovement : Castling (1)
+            if(pPicked is King && destination.Collumn == origin.Collumn - 2)
+            {
+                Position rookOrigin = new Position(origin.Line, origin.Collumn - 4);
+                Position rookDestination = new Position(origin.Line, origin.Collumn - 1);
+                //  It takes the pieces (now it is lifted up) in origin and in the destination.
+                Piece pos = Gboard.LiftPiece(rookDestination);
+                Gboard.PutPiece(pos, rookOrigin);
+                pos.Positioning = rookDestination;
+                pos.DecrementQtdMoves();
+            }
+            //  #SpecialMovement : En passant
+            if(pPicked is Pawn)
+            {
+                if(origin.Collumn != destination.Collumn && capturedPiece == VulnerableEnPassant)
+                {
+                    Piece pawn = Gboard.LiftPiece(destination);
+                    Position posCaptured;
+                    if(pPicked.Color == Color.White)
+                    {
+                        posCaptured = new Position(3, destination.Collumn);
+                    }
+                    else
+                    {
+                        posCaptured = new Position(4, destination.Collumn);
+                    }
+                    Gboard.PutPiece(pawn, posCaptured);
+                }
+            }
         }
         public Piece MovePiece(Position origin, Position destination)
         {
@@ -102,6 +157,7 @@ namespace ChessPieces
             pPicked.Positioning = destination;
             pPicked.IncrementQtdMoves();
 
+            //  #SpecialMovement : Castling (1)
             if(pPicked is King && destination.Collumn == origin.Collumn + 2)
             {
                 Position rookOrigin = new Position(origin.Line, origin.Collumn + 3);
@@ -112,6 +168,7 @@ namespace ChessPieces
                 p.Positioning = rookDestination;
                 p.IncrementQtdMoves();
             }
+            //  #SpecialMovement : Castling (2)
             if(pPicked is King && destination.Collumn == origin.Collumn - 2)
             {
                 Position rookOrigin = new Position(origin.Line, origin.Collumn - 4);
@@ -121,6 +178,27 @@ namespace ChessPieces
                 Gboard.PutPiece(p, rookDestination);
                 p.Positioning = rookDestination;
                 p.IncrementQtdMoves();
+            }
+            //  #SpecialMovement : En passant
+            if(pPicked is Pawn)
+            {
+                if(origin.Collumn != destination.Collumn && pCaptured == null)
+                {
+                    Position posPawn;
+                    if(pPicked.Color == Color.White)
+                    {
+                        posPawn = new Position(destination.Line + 1, destination.Collumn);
+                    }
+                    else
+                    {
+                        posPawn = new Position(destination.Line - 1, destination.Collumn);
+                    }
+                    pCaptured = Gboard.LiftPiece(posPawn);
+                    if(pCaptured != null)
+                    {
+                        CapturedPieces.Add(pCaptured);
+                    }
+                }
             }
 
             return pCaptured;
@@ -250,7 +328,7 @@ namespace ChessPieces
                             bool testCheck = InCheck(color);
                             //  Undoing things, we have use it before just for tests
                             UndoMovement(origin, destination, capturedPiece);
-                            //  If after test the movemment, the [InCheck = true] becomes [InCheck = false], there is at least one movemment that save the king
+                            //  If after test the Movement, the [InCheck = true] becomes [InCheck = false], there is at least one Movement that save the king
                             if(!testCheck)
                             {
                                 return false;
@@ -280,14 +358,14 @@ namespace ChessPieces
             PutNewPiece('g', 8, new Knight(Gboard, Color.Black));
             PutNewPiece('h', 8, new Rook(Gboard, Color.Black));
             //  Black pawn
-            PutNewPiece('a', 7, new Pawn(Gboard, Color.Black));
-            PutNewPiece('b', 7, new Pawn(Gboard, Color.Black));
-            PutNewPiece('c', 7, new Pawn(Gboard, Color.Black));
-            PutNewPiece('d', 7, new Pawn(Gboard, Color.Black));
-            PutNewPiece('e', 7, new Pawn(Gboard, Color.Black));
-            PutNewPiece('f', 7, new Pawn(Gboard, Color.Black));
-            PutNewPiece('g', 7, new Pawn(Gboard, Color.Black));
-            PutNewPiece('h', 7, new Pawn(Gboard, Color.Black));
+            PutNewPiece('a', 7, new Pawn(this, Gboard, Color.Black));
+            PutNewPiece('b', 7, new Pawn(this, Gboard, Color.Black));
+            PutNewPiece('c', 7, new Pawn(this, Gboard, Color.Black));
+            PutNewPiece('d', 7, new Pawn(this, Gboard, Color.Black));
+            PutNewPiece('e', 7, new Pawn(this, Gboard, Color.Black));
+            PutNewPiece('f', 7, new Pawn(this, Gboard, Color.Black));
+            PutNewPiece('g', 7, new Pawn(this, Gboard, Color.Black));
+            PutNewPiece('h', 7, new Pawn(this, Gboard, Color.Black));
             //
             //  White pieces
             PutNewPiece('a', 1, new Rook(Gboard, Color.White));
@@ -299,14 +377,14 @@ namespace ChessPieces
             // PutNewPiece('g', 1, new Knight(Gboard, Color.White));
             PutNewPiece('h', 1, new Rook(Gboard, Color.White));
             //  White pawn
-            PutNewPiece('a', 2, new Pawn(Gboard, Color.White));
-            PutNewPiece('b', 2, new Pawn(Gboard, Color.White));
-            PutNewPiece('c', 2, new Pawn(Gboard, Color.White));
-            PutNewPiece('d', 2, new Pawn(Gboard, Color.White));
-            PutNewPiece('e', 2, new Pawn(Gboard, Color.White));
-            PutNewPiece('f', 2, new Pawn(Gboard, Color.White));
-            PutNewPiece('g', 2, new Pawn(Gboard, Color.White));
-            PutNewPiece('h', 2, new Pawn(Gboard, Color.White));
+            PutNewPiece('a', 2, new Pawn(this, Gboard, Color.White));
+            PutNewPiece('b', 2, new Pawn(this, Gboard, Color.White));
+            PutNewPiece('c', 2, new Pawn(this, Gboard, Color.White));
+            PutNewPiece('d', 2, new Pawn(this, Gboard, Color.White));
+            PutNewPiece('e', 2, new Pawn(this, Gboard, Color.White));
+            PutNewPiece('f', 2, new Pawn(this, Gboard, Color.White));
+            PutNewPiece('g', 2, new Pawn(this, Gboard, Color.White));
+            PutNewPiece('h', 2, new Pawn(this, Gboard, Color.White));
         }
     }
 }

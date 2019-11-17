@@ -6,8 +6,10 @@ namespace ChessPieces
 {
     class Pawn : Piece
     {
-        public Pawn(GameBoard gameBoard, Color color) : base(gameBoard, color)
+        private ChessMatch ChessMatch;
+        public Pawn(ChessMatch chessMatch, GameBoard gameBoard, Color color) : base(gameBoard, color)
         {
+            ChessMatch = chessMatch;
         }
         // private bool CanMove(Position pos)
         // {
@@ -32,7 +34,7 @@ namespace ChessPieces
 
             if(Color == Color.White)
             {
-                //  Normal movemment
+                //  Normal Movement
                 //  Top (1)
                 pos.DefineValues(Positioning.Line - 1, Positioning.Collumn);
                 if(GameBoard.ValidPosition(pos) && isEmpty(pos))
@@ -56,10 +58,25 @@ namespace ChessPieces
                 {
                     mat[pos.Line, pos.Collumn] = true;
                 }
+
+                //  #SpecialMovement : En passant
+                if(Positioning.Line == 3)
+                {
+                    Position left = new Position(Positioning.Line, Positioning.Collumn - 1);
+                    Position right = new Position(Positioning.Line, Positioning.Collumn + 1);
+                    if(GameBoard.ValidPosition(left) && ThereIsEnemy(left) && GameBoard.GetPiece(left) == ChessMatch.VulnerableEnPassant)
+                    {
+                        mat[left.Line - 1, left.Collumn] = true;
+                    }
+                    if(GameBoard.ValidPosition(right) && ThereIsEnemy(right) && GameBoard.GetPiece(right) == ChessMatch.VulnerableEnPassant)
+                    {
+                        mat[right.Line - 1, right.Collumn] = true;
+                    }
+                }
             }
             else
             {
-                //  Normal movemment
+                //  Normal Movement
                 //  Top (1)
                 pos.DefineValues(Positioning.Line + 1, Positioning.Collumn);
                 if(GameBoard.ValidPosition(pos) && isEmpty(pos))
@@ -82,6 +99,21 @@ namespace ChessPieces
                 if(GameBoard.ValidPosition(pos) && GameBoard.GetPiece(pos) != null && ThereIsEnemy(pos))
                 {
                     mat[pos.Line, pos.Collumn] = true;
+                }
+
+                //  #SpecialMovement : En passant
+                if(Positioning.Line == 4)
+                {
+                    Position left = new Position(Positioning.Line, Positioning.Collumn - 1);
+                    Position right = new Position(Positioning.Line, Positioning.Collumn + 1);
+                    if(GameBoard.ValidPosition(left) && ThereIsEnemy(left) && GameBoard.GetPiece(left) == ChessMatch.VulnerableEnPassant)
+                    {
+                        mat[left.Line - 1, left.Collumn] = true;
+                    }
+                    if(GameBoard.ValidPosition(right) && ThereIsEnemy(right) && GameBoard.GetPiece(right) == ChessMatch.VulnerableEnPassant)
+                    {
+                        mat[right.Line + 1, right.Collumn] = true;
+                    }
                 }
             }
             
