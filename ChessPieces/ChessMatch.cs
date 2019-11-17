@@ -102,6 +102,27 @@ namespace ChessPieces
             pPicked.Positioning = destination;
             pPicked.IncrementQtdMoves();
 
+            if(pPicked is King && destination.Collumn == origin.Collumn + 2)
+            {
+                Position rookOrigin = new Position(origin.Line, origin.Collumn + 3);
+                Position rookDestination = new Position(origin.Line, origin.Collumn + 1);
+                //  It takes the pieces (now it is lifted up) in origin and in the destination.
+                Piece p = Gboard.LiftPiece(rookOrigin);
+                Gboard.PutPiece(p, rookDestination);
+                p.Positioning = rookDestination;
+                p.IncrementQtdMoves();
+            }
+            if(pPicked is King && destination.Collumn == origin.Collumn - 2)
+            {
+                Position rookOrigin = new Position(origin.Line, origin.Collumn - 4);
+                Position rookDestination = new Position(origin.Line, origin.Collumn - 1);
+                //  It takes the pieces (now it is lifted up) in origin and in the destination.
+                Piece p = Gboard.LiftPiece(rookOrigin);
+                Gboard.PutPiece(p, rookDestination);
+                p.Positioning = rookDestination;
+                p.IncrementQtdMoves();
+            }
+
             return pCaptured;
         }
         public void ValidateOriginPosition(Position pos)
@@ -254,7 +275,7 @@ namespace ChessPieces
             PutNewPiece('b', 8, new Knight(Gboard, Color.Black));
             PutNewPiece('c', 8, new Bishop(Gboard, Color.Black));
             PutNewPiece('d', 8, new Queen(Gboard, Color.Black));
-            PutNewPiece('e', 8, new King(Gboard, Color.Black));
+            PutNewPiece('e', 8, new King(this, Gboard, Color.Black));
             PutNewPiece('f', 8, new Bishop(Gboard, Color.Black));
             PutNewPiece('g', 8, new Knight(Gboard, Color.Black));
             PutNewPiece('h', 8, new Rook(Gboard, Color.Black));
@@ -270,12 +291,12 @@ namespace ChessPieces
             //
             //  White pieces
             PutNewPiece('a', 1, new Rook(Gboard, Color.White));
-            PutNewPiece('b', 1, new Knight(Gboard, Color.White));
-            PutNewPiece('c', 1, new Bishop(Gboard, Color.White));
-            PutNewPiece('d', 1, new Queen(Gboard, Color.White));
-            PutNewPiece('e', 1, new King(Gboard, Color.White));
-            PutNewPiece('f', 1, new Bishop(Gboard, Color.White));
-            PutNewPiece('g', 1, new Knight(Gboard, Color.White));
+            // PutNewPiece('b', 1, new Knight(Gboard, Color.White));
+            // PutNewPiece('c', 1, new Bishop(Gboard, Color.White));
+            // PutNewPiece('d', 1, new Queen(Gboard, Color.White));
+            PutNewPiece('e', 1, new King(this, Gboard, Color.White));
+            // PutNewPiece('f', 1, new Bishop(Gboard, Color.White));
+            // PutNewPiece('g', 1, new Knight(Gboard, Color.White));
             PutNewPiece('h', 1, new Rook(Gboard, Color.White));
             //  White pawn
             PutNewPiece('a', 2, new Pawn(Gboard, Color.White));

@@ -6,13 +6,20 @@ namespace ChessPieces
 {
     class King : Piece
     {
-        public King(GameBoard gameBoard, Color color) : base(gameBoard, color)
+        private ChessMatch ChessMatch;
+        public King(ChessMatch chessmatch, GameBoard gameBoard, Color color) : base(gameBoard, color)
         {
+            ChessMatch = chessmatch;
         }
         private bool CanMove(Position pos)
         {
             Piece p = GameBoard.GetPiece(pos);
             return p == null || p.Color != this.Color;
+        }
+        private bool CanCastling (Position pos)
+        {
+            Piece p = GameBoard.GetPiece(pos);
+            return p != null && p.Color == Color && p.qtdMoves == 0 && p is Rook;
         }
         public override bool[,] PossibleMovements()
         {
@@ -69,6 +76,36 @@ namespace ChessPieces
             if(GameBoard.ValidPosition(pos) && CanMove(pos))
             {
                 mat[pos.Line, pos.Collumn] = true;
+            }
+            //  #SpecialMovemment : Castling (1)
+            if(qtdMoves == 0 && ChessMatch.Check == false)
+            {
+                Position rookPos = new Position(Positioning.Line, Positioning.Collumn + 3);
+                if(CanCastling(rookPos))
+                {
+                    Position p1 = new Position(Positioning.Line, Positioning.Collumn + 1);
+                    Position p2 = new Position(Positioning.Line, Positioning.Collumn + 2);
+                    if(GameBoard.GetPiece(p1) == null && GameBoard.GetPiece(p2) == null)
+                    {
+                        mat[p1.Line, p1.Collumn] = true;
+                        mat[p2.Line, p2.Collumn] = true;
+                    }
+                }
+            }
+            //  #SpecialMovemment : Castling (2)
+            if(qtdMoves == 0 && ChessMatch.Check == false)
+            {
+                Position rookPos = new Position(Positioning.Line, Positioning.Collumn - 4);
+                if(CanCastling(rookPos))
+                {
+                    Position p1 = new Position(Positioning.Line, Positioning.Collumn - 1);
+                    Position p2 = new Position(Positioning.Line, Positioning.Collumn - 2);
+                    if(GameBoard.GetPiece(p1) == null && GameBoard.GetPiece(p2) == null)
+                    {
+                        mat[p1.Line, p1.Collumn] = true;
+                        mat[p2.Line, p2.Collumn] = true;
+                    }
+                }
             }
 
             //  Return the array of booleans
