@@ -30,7 +30,7 @@ namespace ChessPieces
             //  Pos variable will be altered and reused along the definitions
             Position pos = new Position(0, 0);
 
-            if(this.Color == Color.White)
+            if(Color == Color.White)
             {
                 //  Normal movemment
                 //  Top (1)
@@ -40,19 +40,19 @@ namespace ChessPieces
                     mat[pos.Line, pos.Collumn] = true;
                 }
                 //  Top (2)
-                pos.Line--;
+                pos.DefineValues(Positioning.Line - 2, Positioning.Collumn);
                 if(GameBoard.ValidPosition(pos) && isEmpty(pos) && qtdMoves == 0)
                 {
                     mat[pos.Line, pos.Collumn] = true;
                 }
                 //  Test to attack
                 pos.DefineValues(Positioning.Line - 1, Positioning.Collumn - 1);
-                if(GameBoard.GetPiece(pos) != null && ThereIsEnemy(pos))
+                if(GameBoard.ValidPosition(pos) && GameBoard.GetPiece(pos) != null && ThereIsEnemy(pos))
                 {
                     mat[pos.Line, pos.Collumn] = true;
                 }
                 pos.DefineValues(Positioning.Line - 1, Positioning.Collumn + 1);
-                if(GameBoard.GetPiece(pos) != null && ThereIsEnemy(pos))
+                if(GameBoard.ValidPosition(pos) && GameBoard.GetPiece(pos) != null && ThereIsEnemy(pos))
                 {
                     mat[pos.Line, pos.Collumn] = true;
                 }
@@ -67,19 +67,19 @@ namespace ChessPieces
                     mat[pos.Line, pos.Collumn] = true;
                 }
                 //  Top (2)
-                pos.Line++;
+                pos.DefineValues(Positioning.Line + 2, Positioning.Collumn);
                 if(GameBoard.ValidPosition(pos) && isEmpty(pos) && qtdMoves == 0)
                 {
                     mat[pos.Line, pos.Collumn] = true;
                 }
                 //  Test to attack
                 pos.DefineValues(Positioning.Line + 1, Positioning.Collumn - 1);
-                if(GameBoard.GetPiece(pos) != null && ThereIsEnemy(pos))
+                if(GameBoard.ValidPosition(pos) && GameBoard.GetPiece(pos) != null && ThereIsEnemy(pos))
                 {
                     mat[pos.Line, pos.Collumn] = true;
                 }
                 pos.DefineValues(Positioning.Line + 1, Positioning.Collumn + 1);
-                if(GameBoard.GetPiece(pos) != null && ThereIsEnemy(pos))
+                if(GameBoard.ValidPosition(pos) && GameBoard.GetPiece(pos) != null && ThereIsEnemy(pos))
                 {
                     mat[pos.Line, pos.Collumn] = true;
                 }
