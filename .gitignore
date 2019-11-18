@@ -146,6 +146,7 @@ UpgradeLog*.htm
 
 # vim
 *.txt~
+*.txt
 *.swp
 *.swo
 
