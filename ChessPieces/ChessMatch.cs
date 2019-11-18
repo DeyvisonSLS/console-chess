@@ -51,6 +51,22 @@ namespace ChessPieces
                     throw new GameBoardException("You must not put your own king in check!");
                 }
             }
+
+            Piece p = Gboard.GetPiece(destination);
+
+            //  #SpecialMovement : Pawn promotion
+
+            if(p is Pawn)
+            {
+                if(p.Color == Color.White && destination.Line == 0 || p.Color == Color.Black && destination.Line == 7)
+                {
+                    p = Gboard.LiftPiece(destination);
+                    PiecesInGame.Remove(p);
+                    Piece queen = new Queen(Gboard, p.Color);
+                    Gboard.PutPiece(queen, destination);
+                    PiecesInGame.Add(queen);
+                }
+            }
             
             //  Current player cheking his adversary
             if(InCheck(AdversaryOf(currentPlayer)))
@@ -72,7 +88,6 @@ namespace ChessPieces
                 ChangePlayer();
             }
 
-            Piece p = Gboard.GetPiece(destination);
             // #SpecialMovement : En passant
             if(p is Pawn && (destination.Line == origin.Line - 2 || destination.Line == origin.Line + 2))
             {
@@ -349,23 +364,23 @@ namespace ChessPieces
         public void PutPieces()
         {  
             //  Black pieces
-            PutNewPiece('a', 8, new Rook(Gboard, Color.Black));
-            PutNewPiece('b', 8, new Knight(Gboard, Color.Black));
-            PutNewPiece('c', 8, new Bishop(Gboard, Color.Black));
-            PutNewPiece('d', 8, new Queen(Gboard, Color.Black));
+            // PutNewPiece('a', 8, new Rook(Gboard, Color.Black));
+            // PutNewPiece('b', 8, new Knight(Gboard, Color.Black));
+            // PutNewPiece('c', 8, new Bishop(Gboard, Color.Black));
+            // PutNewPiece('d', 8, new Queen(Gboard, Color.Black));
             PutNewPiece('e', 8, new King(this, Gboard, Color.Black));
-            PutNewPiece('f', 8, new Bishop(Gboard, Color.Black));
-            PutNewPiece('g', 8, new Knight(Gboard, Color.Black));
-            PutNewPiece('h', 8, new Rook(Gboard, Color.Black));
+            // PutNewPiece('f', 8, new Bishop(Gboard, Color.Black));
+            // PutNewPiece('g', 8, new Knight(Gboard, Color.Black));
+            // PutNewPiece('h', 8, new Rook(Gboard, Color.Black));
             //  Black pawn
-            PutNewPiece('a', 7, new Pawn(this, Gboard, Color.Black));
-            PutNewPiece('b', 7, new Pawn(this, Gboard, Color.Black));
-            PutNewPiece('c', 7, new Pawn(this, Gboard, Color.Black));
-            PutNewPiece('d', 7, new Pawn(this, Gboard, Color.Black));
-            PutNewPiece('e', 7, new Pawn(this, Gboard, Color.Black));
-            PutNewPiece('f', 7, new Pawn(this, Gboard, Color.Black));
-            PutNewPiece('g', 7, new Pawn(this, Gboard, Color.Black));
-            PutNewPiece('h', 7, new Pawn(this, Gboard, Color.Black));
+            // PutNewPiece('a', 7, new Pawn(this, Gboard, Color.Black));
+            // PutNewPiece('b', 7, new Pawn(this, Gboard, Color.Black));
+            // PutNewPiece('c', 7, new Pawn(this, Gboard, Color.Black));
+            // PutNewPiece('d', 7, new Pawn(this, Gboard, Color.Black));
+            // PutNewPiece('e', 7, new Pawn(this, Gboard, Color.Black));
+            // PutNewPiece('f', 7, new Pawn(this, Gboard, Color.Black));
+            // PutNewPiece('g', 7, new Pawn(this, Gboard, Color.Black));
+            // PutNewPiece('h', 7, new Pawn(this, Gboard, Color.Black));
             //
             //  White pieces
             PutNewPiece('a', 1, new Rook(Gboard, Color.White));
@@ -377,7 +392,7 @@ namespace ChessPieces
             // PutNewPiece('g', 1, new Knight(Gboard, Color.White));
             PutNewPiece('h', 1, new Rook(Gboard, Color.White));
             //  White pawn
-            PutNewPiece('a', 2, new Pawn(this, Gboard, Color.White));
+            PutNewPiece('a', 7, new Pawn(this, Gboard, Color.White));
             PutNewPiece('b', 2, new Pawn(this, Gboard, Color.White));
             PutNewPiece('c', 2, new Pawn(this, Gboard, Color.White));
             PutNewPiece('d', 2, new Pawn(this, Gboard, Color.White));
